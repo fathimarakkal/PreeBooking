@@ -43,6 +43,15 @@ body {
   z-index: 0;
 }
 
+.brand-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  /* Forces any image to be pure white */
+  drop-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .brand-title {
   color: #ffffff;
   font-size: 3rem;

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="227.404mm" height="44.982mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 675.12 133.54"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:#2A3695;fill-rule:nonzero}
+    .fil3 {fill:url(#id0)}
+    .fil2 {fill:url(#id1)}
+    .fil1 {fill:url(#id2)}
+   ]]>
+  </style>
+  <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="25.81" y1="-6.37" x2="39.5" y2="60.97">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F26620"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#621800"/>
+  </linearGradient>
+  <linearGradient id="id1" gradientUnits="userSpaceOnUse" x1="39.73" y1="128.18" x2="60.78" y2="49.27">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F9B390"/>
+   <stop offset="0.678431" style="stop-opacity:1; stop-color:#F26620"/>
+   <stop offset="0.980392" style="stop-opacity:1; stop-color:#91320E"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#91320E"/>
+  </linearGradient>
+  <linearGradient id="id2" gradientUnits="userSpaceOnUse" x1="51.42" y1="69.46" x2="86.92" y2="-46.89">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F8A278"/>
+   <stop offset="0.129412" style="stop-opacity:1; stop-color:#F8A278"/>
+   <stop offset="0.219608" style="stop-opacity:1; stop-color:#FDE0D0"/>
+   <stop offset="0.619608" style="stop-opacity:1; stop-color:#F26620"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#F26620"/>
+  </linearGradient>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2850816438400">
+   <polygon class="fil0" points="190.32,111.34 190.32,77.53 143.03,22.29 163.98,22.29 198.64,63.32 233.43,22.29 253.27,22.29 205.87,77.53 205.87,111.34 "/>
+   <path class="fil0" d="M313.05 95.78c16.41,0 28.05,-12.37 28.05,-29.15 0,-16.78 -11.64,-28.79 -28.05,-28.79l-21.68 0c-15.92,0 -27.68,11.88 -27.68,28.79 0,16.78 11.64,29.15 27.68,29.15l21.68 0zm-21.68 15.56c-24.86,0 -43.24,-19.6 -43.24,-45.44 0,-26.21 18.37,-43.61 43.24,-43.61l21.68 0c25.72,0 43.61,17.76 43.61,43.61 0,25.85 -18.25,45.44 -43.61,45.44l-21.68 0z"/>
+   <path class="fil0" d="M431.61 95.78c16.41,0 28.05,-12.37 28.05,-29.15 0,-16.78 -11.64,-28.79 -28.05,-28.79l-21.68 0c-15.92,0 -27.68,11.88 -27.68,28.79 0,16.78 11.64,29.15 27.68,29.15l21.68 0zm-21.68 15.56c-24.86,0 -43.24,-19.6 -43.24,-45.44 0,-26.21 18.37,-43.61 43.24,-43.61l21.68 0c25.72,0 43.61,17.76 43.61,43.61 0,25.85 -18.25,45.44 -43.61,45.44l-21.68 0z"/>
+   <path class="fil0" d="M539.4 95.78c16.05,0 27.81,-12.37 27.81,-29.15 0,-16.78 -11.76,-28.79 -27.81,-28.79l-36.13 0 0 57.94 36.13 0zm-51.57 15.56l0 -89.05 51.57 0c25.11,0 43.36,17.76 43.36,43.61 0,25.85 -18.25,45.44 -43.36,45.44l-51.57 0z"/>
+   <path class="fil0" d="M622.32 59.52l49.36 0 0 13.11 -49.36 0 0 -13.11zm-26.83 51.81l0 -89.05 79.5 0 0 15.56 -64.06 0 0 57.94 64.18 0 0 15.56 -79.62 0z"/>
+   <path class="fil1" d="M98.75 0l-0 0 -0 0c-5.86,0 -11.7,2.31 -16.05,6.89l-22.27 23.47 -7.47 7.04c0,0 -8.83,3.93 -22.91,4.58 -10.62,0.5 -20.19,-2.23 -21.98,-2.77l58.23 20.01c10.97,3.77 22.89,4.74 27.72,0l20.77 -21.89c8.41,-8.86 8.04,-22.86 -0.82,-31.26 -4.28,-4.06 -9.75,-6.07 -15.21,-6.07z"/>
+   <path class="fil2" d="M38.31 71.32l0 40.11c0,12.22 9.9,22.11 22.11,22.11 12.22,0 22.11,-9.9 22.11,-22.11l0 -40.11 11.47 -12.09c-4.82,4.74 -16.75,3.77 -27.72,0l-58.23 -20.01 -0.14 -0.05 -0.15 -0.05 30.54 32.19z"/>
+   <path class="fil3" d="M6.9 6.07c-8.86,8.4 -9.23,22.4 -0.83,31.26l1.69 1.79 0.01 0 0.15 0.05 0.14 0.05c1.79,0.54 11.36,3.27 21.98,2.77 14.08,-0.65 22.91,-4.58 22.91,-4.58l7.47 -7.04 -22.27 -23.47c-4.35,-4.58 -10.19,-6.89 -16.05,-6.89 -5.46,0 -10.94,2.01 -15.21,6.07z"/>
+  </g>
+ </g>
+</svg>

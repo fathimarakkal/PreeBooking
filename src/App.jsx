@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './index.css';
-
+import logo from './assets/Yoode.svg';
 const productsList = [
   "Men's Crew Neck Set-in Half Sleeve Jersey",
   "Men's Crew Neck Set-in Full Sleeve Jersey",
@@ -122,7 +122,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="header">
-        <h1 className="brand-title">YOODE</h1>
+        <img src={logo} alt="YOODE Logo" className="brand-logo" />
       </header>
 
       <main className="main-content">
