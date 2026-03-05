@@ -209,20 +209,6 @@ button:active {
   transform: translateY(1px);
 }
 
-.qr-placeholder {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 250px;
-  background-color: #ffffff;
-  margin: 10px 0;
-}
-
-.qr-img {
-  max-width: 100%;
-  height: auto;
-}
 
 .summary-text {
   text-align: center;

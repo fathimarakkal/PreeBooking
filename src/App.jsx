@@ -63,13 +63,18 @@ const sizesList = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     customerName: '',
     company: '',
     email: '',
     phone: '',
     eventName: '',
-    orderDate: '',
+    orderDate: getTodayDate(),
     deliveryDate: '',
     shippingMethod: '',
     deliveryAddress: '',
@@ -77,7 +82,8 @@ function App() {
     quantity: '',
     size: '',
     printingMethod: '',
-    paymentMethod: ''
+    paymentMethod: '',
+    amount: ''
   });
 
   const handleChange = (e) => {
@@ -107,8 +113,8 @@ function App() {
       alert("Your cart is empty. Please add items before proceeding.");
       return;
     }
-    if (!formData.customerName || !formData.phone || !formData.paymentMethod) {
-      alert("Please provide at least your Name, Phone and select a Payment Method.");
+    if (!formData.customerName || !formData.phone || !formData.paymentMethod || !formData.amount) {
+      alert("Please provide at least your Name, Phone, Payment Method, and Amount.");
       return;
     }
     alert(`Prebooking completed! Notification sent to: ${formData.phone}`);
@@ -238,7 +244,7 @@ function App() {
 
         {/* Column 3: Payment */}
         <div className="column">
-          <div className="card" style={{ height: "100%" }}>
+          <div className="card">
             <h2 className="card-title">Payment</h2>
             <div className="form-group">
               <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange}>
@@ -250,11 +256,19 @@ function App() {
               </select>
             </div>
 
-            <div className="qr-placeholder">
-              <img src="/qr_code.png" alt="Payment QR Code" className="qr-img" />
+            <div className="form-group">
+              <input
+                type="number"
+                name="amount"
+                placeholder="Amount (₹)"
+                min="0"
+                value={formData.amount}
+                onChange={handleChange}
+              />
             </div>
 
-            <div style={{ marginTop: "auto" }}>
+
+            <div style={{ marginTop: "20px" }}>
               <button onClick={handleProceed} style={{ width: "100%", padding: "16px 24px", fontSize: "1.1rem" }}>Proceed to Order</button>
             </div>
           </div>
