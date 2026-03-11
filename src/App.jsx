@@ -1,65 +1,18 @@
 import { useState } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import './index.css';
 import logo from './assets/Yoode.svg';
 const productsList = [
-  "Men's Crew Neck Set-in Half Sleeve Jersey",
-  "Men's Crew Neck Set-in Full Sleeve Jersey",
-  "Men's Crew Neck Raglan Half Sleeve Jersey",
-  "Men's Crew Neck Raglan Full Sleeve Jersey",
-  "Men's V-Neck Set-in Half Sleeve Jersey",
-  "Men's V-Neck Set-in Full Sleeve Jersey",
-  "Men's V-Neck Raglan Half Sleeve Jersey",
-  "Men's V-Neck Raglan Full Sleeve Jersey",
-  "Men's Mandarin Collar Set-in Half Sleeve Jersey",
-  "Men's Mandarin Collar Set-in Full Sleeve Jersey",
-  "Men's Mandarin Collar Raglan Half Sleeve Jersey",
-  "Men's Mandarin Collar Raglan Full Sleeve Jersey",
-  "Men's Mandarin Collar Set-in Half Sleeve Jersey With Buttons",
-  "Men's Mandarin Collar Set-in Full Sleeve Jersey With Buttons",
-  "Men's Mandarin Collar Raglan Half Sleeve Jersey With Buttons",
-  "Men's Mandarin Collar Raglan Full Sleeve Jersey With Buttons",
-  "Men's Mandarin Collar Set-in Half Sleeve With Zipper Jersey",
-  "Men's Mandarin Collar Set-in Full Sleeve With Zipper Jersey",
-  "Men's Mandarin Collar Raglan Half Sleeve With Zipper Jersey",
-  "Men's Mandarin Collar Raglan Full Sleeve With Zipper Jersey",
-  "Men's Mandarin Collar Set-in Half Sleeve With YKK Zipper Jersey",
-  "Men's Mandarin Collar Set-in Full Sleeve With YKK Zipper Jersey",
-  "Men's Mandarin Collar Raglan Half Sleeve With YKK Zipper Jersey",
-  "Men's Mandarin Collar Raglan Full Sleeve With YKK Zipper Jersey",
-  "Men's Polo Set-in Half Sleeve Jersey",
-  "Men's Polo Set-in Full Sleeve Jersey",
-  "Men's Polo Raglan Half Sleeve Jersey",
-  "Men's Polo Raglan Full Sleeve Jersey",
-  "Men's Polo Self Collar With Stand Set-in Half Sleeve Jersey",
-  "Men's Polo Self Collar With Stand Set-in Full Sleeve Jersey",
-  "Men's Polo Self Collar With Stand Raglan Half Sleeve Jersey",
-  "Men's Polo Self Collar With Stand Raglan Full Sleeve Jersey",
-  "Men's Polo V-Neck Set-in Half Sleeve Jersey",
-  "Men's Polo V-Neck Set-in Full Sleeve Jersey",
-  "Men's Polo V-Neck Raglan Half Sleeve Jersey",
-  "Men's Polo V-Neck Raglan Full Sleeve Jersey",
-  "Men's Polo Set-in Half Sleeve With Zipper Jersey",
-  "Men's Polo Set-in Full Sleeve With Zipper Jersey",
-  "Men's Polo Raglan Half Sleeve With Zipper Jersey",
-  "Men's Polo Raglan Full Sleeve With Zipper Jersey",
-  "Men's Polo Set-in Half Sleeve With YKK Zipper Jersey",
-  "Men's Polo Set-in Full Sleeve With YKK Zipper Jersey",
-  "Men's Polo Raglan Half Sleeve With YKK Zipper Jersey",
-  "Men's Polo Raglan Full Sleeve With YKK Zipper Jersey",
-  "Men's Crew Neck Tank Top",
-  "Men's V-Neck Tank Top",
-  "Oversized Raglan Half Sleeve Jersey",
-  "Oversized Set-in Half Sleeve Jersey",
-  "Oversized Set-in Half Sleeve Button Jersey",
-  "Oversized Raglan Half Sleeve Button Jersey",
-  "Men's Football Shorts",
-  "Men's Athletic Shorts",
-  "Men's Track Pants",
-  "Men's Track Pants - Superpoly 220 GSM",
-  "Men's Athletic Shorts - Superpoly 220 GSM"
+  "cricket kit",
+  "Football kit",
+  "Volleyball kit",
+  "Basketball kit",
+  "Throwball kit",
+  "Other",
 ];
 
-const sizesList = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+const gendersList = ["Male", "Female"];
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -71,17 +24,14 @@ function App() {
   const [formData, setFormData] = useState({
     customerName: '',
     company: '',
-    email: '',
     phone: '',
     eventName: '',
     orderDate: getTodayDate(),
     deliveryDate: '',
-    shippingMethod: '',
-    deliveryAddress: '',
+    pickupMethod: '',
     product: '',
     quantity: '',
-    size: '',
-    printingMethod: '',
+    gender: '',
     paymentMethod: '',
     amount: ''
   });
@@ -93,18 +43,17 @@ function App() {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    if (!formData.product || !formData.quantity || !formData.size || !formData.printingMethod) {
-      alert("Please select product, quantity, size, and printing method.");
+    if (!formData.product || !formData.quantity || !formData.gender) {
+      alert("Please select product, quantity, and gender.");
       return;
     }
     const newItem = {
       product: formData.product,
       quantity: formData.quantity,
-      size: formData.size,
-      printingMethod: formData.printingMethod
+      gender: formData.gender
     };
     setCartItems(prev => [...prev, newItem]);
-    alert(`${formData.quantity}x ${formData.product} added to cart!`);
+    /*  alert(`${formData.quantity}x ${formData.product} added to cart!`); */
   };
 
   const handleProceed = (e) => {
@@ -118,11 +67,157 @@ function App() {
       return;
     }
     alert(`Prebooking completed! Notification sent to: ${formData.phone}`);
-    setCartItems([]);
+    // setCartItems([]); // Uncomment to clear cart after proceed, but keeping to allow PDF download.
   };
 
   const handleRemoveItem = (index) => {
     setCartItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+
+    // Brand Colors
+    const primaryColor = [242, 102, 34]; // Yoode Orange
+    const darkGray = [51, 51, 51];
+    const lightGray = [240, 240, 240];
+
+    // Fetch and Draw Logo from DOM
+    const logoImg = document.querySelector('.brand-logo');
+    let shiftY = 0;
+    if (logoImg) {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = logoImg.width * 3 || 300;
+        canvas.height = logoImg.height * 3 || 100;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(logoImg, 0, 0, canvas.width, canvas.height);
+        const imgData = canvas.toDataURL('image/png', 1.0);
+
+        const imgWidth = 70;
+        const imgHeight = (canvas.height / canvas.width) * imgWidth;
+        const imgX = (210 - imgWidth) / 2;
+        doc.addImage(imgData, 'PNG', imgX, 10, imgWidth, imgHeight);
+
+        shiftY = Math.max(imgHeight + 20, 30);
+      } catch (e) {
+        console.error("Logo addition failed: ", e);
+      }
+    }
+
+    // Header Background
+    doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.rect(0, shiftY, 210, 30, 'F');
+
+    // Header Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    const headerTitle = "INVOICE";
+    const titleWidth = doc.getTextWidth(headerTitle);
+    const titleX = (210 - titleWidth) / 2;
+    doc.text(headerTitle, titleX, shiftY + 19);
+
+    // Header Dates
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    const orderDateText = `Order Date: ${formData.orderDate}`;
+    doc.text(orderDateText, 196 - doc.getTextWidth(orderDateText), shiftY + 12);
+    const deliveryDateText = `Delivery Date: ${formData.deliveryDate || 'N/A'}`;
+    doc.text(deliveryDateText, 196 - doc.getTextWidth(deliveryDateText), shiftY + 18);
+
+    // Section 1: Customer Details
+    doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Customer Details", 14, shiftY + 45);
+
+    doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.setLineWidth(0.5);
+    doc.line(14, shiftY + 47, 95, shiftY + 47);
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Name:`, 14, shiftY + 55);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.customerName || 'N/A'}`, 35, shiftY + 55);
+
+    doc.setFont('helvetica', 'normal'); doc.text(`Company:`, 14, shiftY + 62);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.company || 'N/A'}`, 35, shiftY + 62);
+
+    doc.setFont('helvetica', 'normal'); doc.text(`Phone:`, 14, shiftY + 69);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.phone || 'N/A'}`, 35, shiftY + 69);
+
+    doc.setFont('helvetica', 'normal'); doc.text(`Event:`, 14, shiftY + 76);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.eventName || 'N/A'}`, 35, shiftY + 76);
+
+    // Section 2: Order Information
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Order Information", 110, shiftY + 45);
+    doc.line(110, shiftY + 47, 196, shiftY + 47);
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal'); doc.text(`Pickup Method:`, 110, shiftY + 55);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.pickupMethod === 'store' ? 'Store Pickup' : formData.pickupMethod === 'counter' ? 'Counter Pickup' : 'N/A'}`, 145, shiftY + 55);
+
+    doc.setFont('helvetica', 'normal'); doc.text(`Payment:`, 110, shiftY + 62);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.paymentMethod ? formData.paymentMethod.toUpperCase() : 'N/A'}`, 145, shiftY + 62);
+
+    doc.setFont('helvetica', 'normal'); doc.text(`Total Amount:`, 110, shiftY + 69);
+    doc.setFont('helvetica', 'bold'); doc.text(`${formData.amount ? 'Rs. ' + formData.amount : 'N/A'}`, 145, shiftY + 69);
+
+    // Itemized Table
+    let finalY = shiftY + 85;
+    if (cartItems.length > 0) {
+      const tableColumn = ["Product", "Gender", "Quantity"];
+      const tableRows = cartItems.map(item => [item.product, item.gender, item.quantity]);
+
+      autoTable(doc, {
+        startY: shiftY + 80,
+        head: [tableColumn],
+        body: tableRows,
+        theme: 'striped',
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: 255,
+          fontSize: 11,
+          fontStyle: 'bold',
+          halign: 'left'
+        },
+        bodyStyles: {
+          fontSize: 10,
+          textColor: darkGray,
+        },
+        alternateRowStyles: {
+          fillColor: lightGray
+        },
+        margin: { left: 14, right: 14 }
+      });
+
+      finalY = doc.lastAutoTable.finalY + 15;
+
+      const totalQty = cartItems.reduce((acc, item) => acc + parseInt(item.quantity, 10), 0);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Total Quantity: ${totalQty}`, 196 - doc.getTextWidth(`Total Quantity: ${totalQty}`), finalY);
+
+    } else {
+      doc.setFont('helvetica', 'italic');
+      doc.text("No items added to this order.", 14, shiftY + 80);
+    }
+
+    // Page Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Generated on ${new Date().toLocaleString()}`, 14, 290);
+      doc.text(`Page ${i} of ${pageCount}`, 196 - doc.getTextWidth(`Page ${i} of ${pageCount}`), 290);
+    }
+
+    doc.save(`Invoice_${formData.customerName || 'Order'}.pdf`);
   };
 
   return (
@@ -144,42 +239,32 @@ function App() {
               <input type="text" name="company" placeholder="Company" value={formData.company} onChange={handleChange} />
             </div>
             <div className="form-group">
-              <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
-            </div>
-            <div className="form-group">
               <input type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} />
             </div>
             <div className="form-group">
               <input type="text" name="eventName" placeholder="Event Name" value={formData.eventName} onChange={handleChange} />
             </div>
-          </div>
-          <div className="card">
             <div className="row-group">
               <div className="form-group date-input-container">
-                <input className="date-input" type="text" name="orderDate" placeholder="Order Date"
+                <label style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginLeft: "4px" }}>Order Date</label>
+                <input className="date-input" type="date" name="orderDate"
                   value={formData.orderDate}
-                  onFocus={(e) => e.target.type = 'date'}
-                  onBlur={(e) => { if (!e.target.value) e.target.type = 'text'; }}
                   onChange={handleChange} title="Order Date" />
               </div>
               <div className="form-group date-input-container">
-                <input className="date-input" type="text" name="deliveryDate" placeholder="Delivery Date"
+                <label style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginLeft: "4px" }}>Delivery Date</label>
+                <input className="date-input" type="date" name="deliveryDate"
+                  min={formData.orderDate}
                   value={formData.deliveryDate}
-                  onFocus={(e) => e.target.type = 'date'}
-                  onBlur={(e) => { if (!e.target.value) e.target.type = 'text'; }}
                   onChange={handleChange} title="Delivery Date" />
               </div>
             </div>
             <div className="form-group">
-              <select name="shippingMethod" value={formData.shippingMethod} onChange={handleChange}>
-                <option value="" disabled>Shipping Method</option>
-                <option value="standard">Standard Shipping</option>
-                <option value="express">Express Delivery</option>
-                <option value="pickup">Local Pickup</option>
+              <select name="pickupMethod" value={formData.pickupMethod} onChange={handleChange}>
+                <option value="" disabled>Pickup Method</option>
+                <option value="store">Store Pickup</option>
+                <option value="counter">Counter Pickup</option>
               </select>
-            </div>
-            <div className="form-group">
-              <textarea name="deliveryAddress" placeholder="Delivery Address" value={formData.deliveryAddress} onChange={handleChange}></textarea>
             </div>
           </div>
         </div>
@@ -195,22 +280,15 @@ function App() {
               </select>
             </div>
             <div className="row-group">
-              <div className="form-group" style={{ flex: 2 }}>
+              <div className="form-group">
                 <input type="number" name="quantity" placeholder="Quantity" min="1" value={formData.quantity} onChange={handleChange} />
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <select name="size" value={formData.size} onChange={handleChange}>
-                  <option value="" disabled>Size</option>
-                  {sizesList.map(s => <option key={s} value={s}>{s}</option>)}
+              <div className="form-group">
+                <select name="gender" value={formData.gender} onChange={handleChange}>
+                  <option value="" disabled>Gender</option>
+                  {gendersList.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
               </div>
-            </div>
-            <div className="form-group">
-              <select name="printingMethod" value={formData.printingMethod} onChange={handleChange}>
-                <option value="" disabled>Printing Method</option>
-                <option value="aop">AOP</option>
-                <option value="other">Other Printing Method</option>
-              </select>
             </div>
             <button onClick={handleAddToCart} style={{ marginTop: "8px" }}>Add to Cart</button>
             <div className="cart-items-container">
@@ -222,9 +300,8 @@ function App() {
                         <div className="cart-item-details">
                           <p className="cart-item-title">{item.product}</p>
                           <div className="cart-item-meta">
-                            <span>Size: <strong>{item.size}</strong></span>
+                            <span>Gender: <strong>{item.gender}</strong></span>
                             <span>Qty: <strong>{item.quantity}</strong></span>
-                            <span className="print-method">Print: <strong>{item.printingMethod === 'aop' ? 'AOP' : 'Other'}</strong></span>
                           </div>
                         </div>
                         <button className="remove-btn" onClick={() => handleRemoveItem(index)} title="Remove Item">✕</button>
@@ -268,8 +345,9 @@ function App() {
             </div>
 
 
-            <div style={{ marginTop: "20px" }}>
+            <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
               <button onClick={handleProceed} style={{ width: "100%", padding: "16px 24px", fontSize: "1.1rem" }}>Proceed to Order</button>
+              <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "12px 24px", fontSize: "1rem", backgroundColor: "var(--bg-card)", color: "var(--primary)", border: "1px solid var(--primary)" }}>Download PDF</button>
             </div>
           </div>
         </div>
