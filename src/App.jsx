@@ -15,6 +15,8 @@ const productsList = [
 const gendersList = ["Male", "Female"];
 
 function App() {
+  const [view, setView] = useState('form');
+  const [orders, setOrders] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const getTodayDate = () => {
     const today = new Date();
@@ -66,6 +68,22 @@ function App() {
       alert("Please provide at least your Name, Phone, Payment Method, and Amount.");
       return;
     }
+
+    const newOrder = {
+      id: `ORD${String(orders.length + 1).padStart(3, '0')}`,
+      customerName: formData.customerName,
+      company: formData.company || '-',
+      phone: formData.phone,
+      eventName: formData.eventName || '-',
+      orderDate: formData.orderDate,
+      deliveryDate: formData.deliveryDate || '-',
+      pickupMethod: formData.pickupMethod === 'store' ? 'Store Pickup' : formData.pickupMethod === 'counter' ? 'Counter Pickup' : '-',
+      amount: formData.amount,
+      cartItems: [...cartItems],
+      status: 'Pending'
+    };
+
+    setOrders([newOrder, ...orders]);
     alert(`Prebooking completed! Notification sent to: ${formData.phone}`);
     // setCartItems([]); // Uncomment to clear cart after proceed, but keeping to allow PDF download.
   };
@@ -163,7 +181,7 @@ function App() {
     doc.setFont('helvetica', 'normal'); doc.text(`Payment:`, 110, shiftY + 62);
     doc.setFont('helvetica', 'bold'); doc.text(`${formData.paymentMethod ? formData.paymentMethod.toUpperCase() : 'N/A'}`, 145, shiftY + 62);
 
-    doc.setFont('helvetica', 'normal'); doc.text(`Total Amount:`, 110, shiftY + 69);
+    doc.setFont('helvetica', 'normal'); doc.text(`Advance Amount:`, 110, shiftY + 69);
     doc.setFont('helvetica', 'bold'); doc.text(`${formData.amount ? 'Rs. ' + formData.amount : 'N/A'}`, 145, shiftY + 69);
 
     // Itemized Table
@@ -219,6 +237,133 @@ function App() {
 
     doc.save(`Invoice_${formData.customerName || 'Order'}.pdf`);
   };
+
+  if (view === 'dashboard') {
+    const totalAmount = orders.reduce((acc, order) => acc + Number(order.amount), 0);
+    const pendingCount = orders.filter(o => o.status === 'Pending').length;
+
+    return (
+      <div className="app-container">
+        <header className="header" style={{ height: "180px", paddingBottom: "30px", justifyContent: "center", position: "relative" }}>
+          <img src={logo} alt="YOODE Logo" className="brand-logo" />
+          <button onClick={() => setView('form')} style={{ position: "absolute", top: "20px", right: "20px", width: "auto", padding: "8px 16px", backgroundColor: "rgba(255,255,255,0.2)", color: "white", border: "1px solid white" }}>← Back to Form</button>
+        </header>
+
+        <main className="dashboard-content" style={{ padding: "0 40px", maxWidth: "1250px", margin: "-80px auto 40px auto", zIndex: 1, width: "100%", animation: "fadeIn 0.6s ease-out forwards", display: "flex", flexDirection: "column", gap: "30px" }}>
+
+          <div className="card" style={{ padding: "30px", alignItems: "center" }}>
+            <h2 style={{ fontSize: "1.8rem", color: "#222", marginBottom: "24px" }}>Total Order Summary</h2>
+            <div style={{ display: "flex", width: "100%", gap: "20px", justifyContent: "space-between", flexWrap: "wrap" }}>
+              <div style={{ flex: "1 1 min-content", display: "flex", alignItems: "center", backgroundColor: "#fff5eb", padding: "20px", borderRadius: "12px", gap: "20px" }}>
+                <div style={{ fontSize: "3rem", color: "var(--primary-orange)" }}>🧑‍💼</div>
+                <div>
+                  <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", marginBottom: "4px" }}>Total Orders</p>
+                  <h3 style={{ fontSize: "1.8rem", color: "#222" }}>{orders.length}</h3>
+                </div>
+              </div>
+              <div style={{ flex: "1 1 min-content", display: "flex", alignItems: "center", backgroundColor: "#f6f6f6", padding: "20px", borderRadius: "12px", gap: "20px" }}>
+                <div style={{ fontSize: "3rem", color: "var(--primary-orange)" }}>₹</div>
+                <div>
+                  <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", marginBottom: "4px" }}>Advance Amount</p>
+                  <h3 style={{ fontSize: "1.8rem", color: "#222" }}>₹ {totalAmount.toLocaleString('en-IN')}</h3>
+                </div>
+              </div>
+              <div style={{ flex: "1 1 min-content", display: "flex", alignItems: "center", backgroundColor: "#f6f6f6", padding: "20px", borderRadius: "12px", gap: "20px" }}>
+                <div style={{ fontSize: "3rem", color: "var(--primary-orange)" }}>📋</div>
+                <div>
+                  <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", marginBottom: "4px" }}>Pending Orders</p>
+                  <h3 style={{ fontSize: "1.8rem", color: "#222" }}>{pendingCount}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: "30px", overflowX: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+              <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                <span>Show</span>
+                <input type="text" placeholder="Search..." style={{ width: "200px", padding: "8px 12px" }} />
+              </div>
+              <button style={{ width: "auto", padding: "10px 20px", display: "flex", gap: "8px", alignItems: "center" }}>
+                📥 Download PDF
+              </button>
+            </div>
+
+            <p style={{ color: "var(--text-muted)", marginBottom: "16px", fontSize: "0.95rem" }}>Showing 1 to {Math.min(10, orders.length)} of {orders.length} entries</p>
+
+            <div style={{ overflowX: "auto", border: "1px solid #eee", borderRadius: "8px" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.95rem", minWidth: "900px" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#eaeaea", color: "#333" }}>
+                    <th style={{ padding: "12px" }}>Order ID </th>
+                    <th style={{ padding: "12px" }}>Customer Name </th>
+                    <th style={{ padding: "12px" }}>Company </th>
+                    <th style={{ padding: "12px" }}>Phone Number </th>
+                    <th style={{ padding: "12px" }}>Event Name </th>
+                    <th style={{ padding: "12px" }}>Products </th>
+                    <th style={{ padding: "12px" }}>Order Date </th>
+                    <th style={{ padding: "12px" }}>Delivery Date </th>
+                    <th style={{ padding: "12px" }}>Pickup Method </th>
+                    <th style={{ padding: "12px" }}>Advance Amount (₹)</th>
+                    <th style={{ padding: "12px", textAlign: "center" }}>Status </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((order, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid #eee" }}>
+                      <td style={{ padding: "12px", color: "var(--primary-orange)", fontWeight: "600" }}>{order.id}</td>
+                      <td style={{ padding: "12px" }}>{order.customerName}</td>
+                      <td style={{ padding: "12px" }}>{order.company}</td>
+                      <td style={{ padding: "12px" }}>{order.phone}</td>
+                      <td style={{ padding: "12px" }}>{order.eventName}</td>
+                      <td style={{ padding: "12px" }}>
+                        {order.cartItems && order.cartItems.length > 0 ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                            {order.cartItems.map((item, i) => (
+                              <span key={i} style={{ fontSize: "0.85rem", color: "#555" }}>
+                                <strong>{item.quantity}x</strong> {item.product} ({item.gender})
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: "0.85rem", color: "#999" }}>-</span>
+                        )}
+                      </td>
+                      <td style={{ padding: "12px" }}>{order.orderDate}</td>
+                      <td style={{ padding: "12px" }}>{order.deliveryDate}</td>
+                      <td style={{ padding: "12px" }}>{order.pickupMethod}</td>
+                      <td style={{ padding: "12px", fontWeight: "600" }}>₹ {Number(order.amount).toLocaleString('en-IN')}</td>
+                      <td style={{ padding: "12px", textAlign: "center" }}>
+                        <span style={{
+                          backgroundColor: order.status === 'Completed' ? '#4e9a74' : '#d27c30',
+                          color: "white",
+                          padding: "4px 12px",
+                          borderRadius: "20px",
+                          fontSize: "0.85rem",
+                          fontWeight: "600"
+                        }}>
+                          {order.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Showing 1 to {Math.min(10, orders.length)} of {orders.length} entries</p>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button style={{ width: "auto", padding: "6px 16px", backgroundColor: "#fff", color: "#333", border: "1px solid #ddd", fontSize: "0.9rem" }}>Previous</button>
+                <button style={{ width: "auto", padding: "6px 12px", backgroundColor: "var(--primary-orange)", color: "white", borderRadius: "4px", fontSize: "0.9rem" }}>1</button>
+                <button style={{ width: "auto", padding: "6px 16px", backgroundColor: "#fff", color: "#333", border: "1px solid #ddd", fontSize: "0.9rem" }}>Next</button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
@@ -347,7 +492,10 @@ function App() {
 
             <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
               <button onClick={handleProceed} style={{ width: "100%", padding: "16px 24px", fontSize: "1.1rem" }}>Proceed to Order</button>
-              <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "12px 24px", fontSize: "1rem", backgroundColor: "var(--bg-card)", color: "var(--primary)", border: "1px solid var(--primary)" }}>Download PDF</button>
+              <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "12px 24px", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--primary-orange)", border: "1px solid var(--primary-orange)" }}>Download PDF</button>
+              <button onClick={() => setView('dashboard')} style={{ width: "100%", padding: "12px 24px", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--primary-orange)", border: "1px solid var(--primary-orange)", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+                📊 Order Summary
+              </button>
             </div>
           </div>
         </div>
